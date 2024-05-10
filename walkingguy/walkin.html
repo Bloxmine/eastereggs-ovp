@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Walking guy</title>
+    <style>
+        body {
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .walker {
+            width: 100px;
+            height: 100px;
+            background-color: #000;
+            position: absolute;
+            left: 0;
+            border-radius: 50%;
+            animation: walk 1s infinite, moveRight 5s linear infinite;
+        }
+        .walker::before {
+            content: '';
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #fff;
+            border-radius: 50%;
+            top: 10px;
+            left: 10px;
+            animation: walk 1s infinite;
+        }
+        .walker::after {
+            content: '';
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #fff;
+            border-radius: 50%;
+            top: 10px;
+            right: 10px;
+            animation: walk 1s infinite;
+        }
+        @keyframes walk {
+            0% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(10px);
+            }
+            100% {
+                transform: translateY(0);
+            }
+        }
+        @keyframes moveRight {
+            0% {
+                left: 0;
+            }
+            100% {
+                left: calc(100vw - 100px);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="walker"></div>
+</body>
+<script>
+    const walker = document.querySelector('.walker');
+    let isWalking = false;
+    walker.addEventListener('click', () => {
+        if (isWalking) {
+            const computedStyle = getComputedStyle(walker);
+            const left = computedStyle.getPropertyValue('left');
+            walker.style.animationPlayState = 'paused';
+            walker.style.animation = 'none';
+            walker.style.left = left;
+            isWalking = false;
+        } else {
+            const computedStyle = getComputedStyle(walker);
+            const left = parseFloat(computedStyle.getPropertyValue('left'));
+            const remainingDistance = window.innerWidth - left - walker.offsetWidth;
+            walker.style.animationPlayState = 'running';
+            walker.style.animation = `walk 1s infinite, moveRight ${remainingDistance / 100}s linear infinite`;
+            walker.style.transform = 'rotate(0deg)';
+            isWalking = true;
+        }
+    });
+</script>
+</html>
